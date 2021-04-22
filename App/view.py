@@ -24,8 +24,8 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as om
 assert cf
-
 
 """
 La vista se encarga de la interacción con el usuario
@@ -34,10 +34,28 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
-def printMenu():
+def print_menu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Caracterizar reproducciones")
+    print("3- Encontrar musica para festejar")
+    print("4- Encontrar musica para estudiar")
+    print("5- Estudiar los generos musicales")
+    print("6- Encontrar el genero musical mas escuchado en el tiempo")
+    print("0- Salir")
+
+def init_catalog():
+    """
+    Inicializa el catalogo de videos
+    """
+    return controller.init_catalog()
+
+
+def load_data(catalog):
+    """
+    Carga los libros en la estructura de datos
+    """
+    controller.load_data(catalog)
 
 catalog = None
 
@@ -45,14 +63,24 @@ catalog = None
 Menu principal
 """
 while True:
-    printMenu()
+    print_menu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-
+        catalog = init_catalog()
+        load_data(catalog)
+        print('Se cargaron: ',lt.size(catalog['events']), ' eventos de reproduccion')
+        print('Altura del arbol: ' + str(om.height(catalog['instrumentalness_index'])))
     elif int(inputs[0]) == 2:
         pass
-
+    elif int(inputs[0]) == 3:
+        pass
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        pass
+    elif int(inputs[0]) == 6:
+        pass
     else:
         sys.exit(0)
 sys.exit(0)
