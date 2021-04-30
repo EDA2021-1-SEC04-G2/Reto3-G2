@@ -23,6 +23,7 @@
 import config as cf
 import model
 import csv
+from DISClib.ADT import list as lt
 
 
 """
@@ -47,6 +48,8 @@ def load_events1(catalog):
     input_file = csv.DictReader(open(eventsfile, encoding='utf-8'))
     for event in input_file:
         model.add_event(catalog, event)
+    
+        
 
 def load_events2(catalog):
     eventsfile = cf.data_dir + 'subsamples-small/user_track_hashtag_timestamp-small.csv'

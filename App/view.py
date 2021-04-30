@@ -25,6 +25,7 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
+from DISClib.ADT import map as m
 assert cf
 
 """
@@ -69,8 +70,10 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = init_catalog()
         load_data(catalog)
-        print('Se cargaron: ',lt.size(catalog['events']), ' eventos de reproduccion')
+        print('Se cargaron: ',m.size(catalog['events']), ' eventos de reproduccion')
         print('Altura del arbol: ' + str(om.height(catalog['instrumentalness_index'])))
+        print(om.size(catalog['instrumentalness_index']))
+        print('hay', m.size(catalog['artists']),'artistas')
     elif int(inputs[0]) == 2:
         pass
     elif int(inputs[0]) == 3:
