@@ -56,9 +56,12 @@ def load_events2(catalog):
     input_file = csv.DictReader(open(eventsfile, encoding='utf-8'))
     for event2 in input_file:
         model.add_hashtag(event2,catalog)
-    
+ 
 
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def get_events_characteristic(catalog,characteristic_index,lo,hi):
+    return model.get_events_characteristic(catalog,characteristic_index,lo,hi)

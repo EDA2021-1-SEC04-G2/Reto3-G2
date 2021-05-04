@@ -72,10 +72,13 @@ while True:
         load_data(catalog)
         print('Se cargaron: ',m.size(catalog['events']), ' eventos de reproduccion')
         print('Altura del arbol: ' + str(om.height(catalog['instrumentalness_index'])))
-        print(om.size(catalog['instrumentalness_index']))
         print('hay', m.size(catalog['artists']),'artistas')
+        print(lt.getElement(m.valueSet(catalog['events']),1))
     elif int(inputs[0]) == 2:
-        pass
+        characteristic_index='instrumentalness_index'
+        lo=float(input('lo: '))
+        hi=float(input('hi: '))
+        print(controller.get_events_characteristic(catalog,characteristic_index,lo,hi))
     elif int(inputs[0]) == 3:
         pass
     elif int(inputs[0]) == 4:
