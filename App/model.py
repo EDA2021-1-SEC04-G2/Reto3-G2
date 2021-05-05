@@ -92,10 +92,9 @@ def update_characteristic_index(map, event,characteristic):
     return map
 
 def add_hashtag(event2,catalog):
-    return None
     tupla=event2['created_at'],event2['user_id'],event2['track_id']
     entry=m.get(catalog['events'],tupla)
-    hashtag=event2['hashtag']
+    hashtag=event2['hashtag'].lower()
     if entry!=None:
        event1=me.getValue(entry)
        if 'hashtag' not in event1:
@@ -103,7 +102,7 @@ def add_hashtag(event2,catalog):
        lt.addLast(event1['hashtag'],hashtag)
     else:
         event2['hashtag']=lt.newList('ARRAY_LIST')
-        event2[]
+        lt.addLast(event2['hashtag'],hashtag)
         m.put(catalog['events'],tupla,event2)
 
 
