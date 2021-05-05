@@ -64,4 +64,5 @@ def load_events2(catalog):
 # Funciones de consulta sobre el catálogo
 
 def get_events_characteristic(catalog,characteristic_index,lo,hi):
-    return model.get_events_characteristic(catalog,characteristic_index,lo,hi)
+    return model.get_events_characteristic(catalog,characteristic_index,lo,hi)[0],
+           model.get_events_characteristic(catalog,characteristic_index,lo,hi)[1]

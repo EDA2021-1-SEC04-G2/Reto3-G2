@@ -75,12 +75,13 @@ while True:
         print('hay', m.size(catalog['artists']),'artistas')
         print(lt.getElement(m.valueSet(catalog['events']),1))
     elif int(inputs[0]) == 2:
-        characteristic_index='instrumentalness_index'
+        characteristic_index='tempo_index'
         lo=float(input('lo: '))
         hi=float(input('hi: '))
         print(controller.get_events_characteristic(catalog,characteristic_index,lo,hi))
     elif int(inputs[0]) == 3:
-        pass
+        generos=input('Los generos son: ')
+        generos=generos.split(',')
     elif int(inputs[0]) == 4:
         pass
     elif int(inputs[0]) == 5:
