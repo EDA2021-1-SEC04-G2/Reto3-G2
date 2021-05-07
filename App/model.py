@@ -69,7 +69,7 @@ def new_catalog():
                               'Jazz and Funk':(120,125),
                               'Pop':(100,130),
                               'R&B':(60,80),
-                              'Rock':(110,140)
+                              'Rock':(110,140),
                               'Metal':(100,160)}
     return catalog
 
@@ -116,7 +116,6 @@ def add_hashtag(event2,catalog):
         event2['hashtag']=lt.newList('ARRAY_LIST')
         lt.addLast(event2['hashtag'],hashtag)
         m.put(catalog['events'],tupla,event2)
-        m.put(catalog['artists',even2['artist_id'],None])
      
 
     
@@ -160,21 +159,24 @@ def get_tracks_party(catalog,lo1,hi1,lo2,hi2):
     lst=om.values(energy_tree,lo1,hi1)
     energy_dance_list=lt.newList('ARRAY_LIST')
     for entry in lt.iterator(lst):
-        for track in lt.iterator(m.keyValues(entry['tracks'])):
-            if lo2<=track['danceability']<=hi2:
+        for track in lt.iterator(m.valueSet(entry['tracks'])):
+            if lo2<=float(track['danceability'])<=hi2:
                 lt.addLast(energy_dance_list,track)
     return energy_dance_list
 
 def get_tracks_study(catalog,lo1,hi1,lo2,hi2):
-    #TODO 
-    energy_tree=catalog['energy_index']
-    lst=om.values(energy_tree,lo1,hi1)
-    energy_dance_list=lt.newList('ARRAY_LIST')
+    intrumentalness_tree=catalog['instrumentalness_index']
+    lst=om.values(intrumentalness_tree,lo1,hi1)
+    instru_tempo_list=lt.newList('ARRAY_LIST')
     for entry in lt.iterator(lst):
-        for track in lt.iterator(m.keyValues(entry['tracks'])):
-            if lo2<=track['danceability']<=hi2:
-                lt.addLast(energy_dance_list,track)
-    return energy_dance_list
+        for track in lt.iterator(m.valueSet(entry['tracks'])):
+            if lo2<=float(track['tempo'])<=hi2:
+                lt.addLast(instru_tempo_list,track)
+    return instru_tempo_list
+
+def add_genre(catalog,generos,name,lo,hi):
+    catalog['tempo_generos'][name]=(lo,hi)
+    generos.append(name)
     
 def get_events_by_genero(catalog,generos):
     total=0
@@ -182,10 +184,21 @@ def get_events_by_genero(catalog,generos):
     for genero in generos:
         lo=catalog['tempo_generos'][genero][0]
         hi=catalog['tempo_generos'][genero][1]
-        ans_genero=get_events_characteristic(catalog,'tempo_index',lo,hi)
+        ans_genero=get_events_characteristic(catalog,'tempo_index',lo,hi),genero,lo,hi
         lt.addLast(lista,ans_genero)
-        total+=ans_genero[0]
+        total+=ans_genero[0][0]
     return total,lista
+
+
+def events_size(catalog):
+    return m.size(catalog['events'])
+
+def artists_size(catalog):
+    return m.size(catalog['artists'])
+
+def tracks_size(catalog):
+    return m.size(catalog['tracks'])
+
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
