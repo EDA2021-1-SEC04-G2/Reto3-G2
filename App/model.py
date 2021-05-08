@@ -62,6 +62,18 @@ def new_catalog():
                                       comparefunction=compare_characteristic)
     catalog['tempo_index'] = om.newMap(omaptype='RBT',
                                       comparefunction=compare_characteristic)
+    catalog['times']=om.newMap(omaptype='RBT',
+                                      comparefunction=compare_characteristic)
+    catalog['tempo_generos_editable']={'Reggae':(60,90),
+                              'Down-tempo':(70,100),
+                              'Chill-out':(90,120),
+                              'Hip-hop':(85,115),
+                              'Jazz and Funk':(120,125),
+                              'Pop':(100,130),
+                              'R&B':(60,80),
+                              'Rock':(110,140),
+                              'Metal':(100,160)}
+   
     catalog['tempo_generos']={'Reggae':(60,90),
                               'Down-tempo':(70,100),
                               'Chill-out':(90,120),
@@ -89,11 +101,18 @@ def add_event(catalog, event):
          update_characteristic_index(catalog['acousticness_index'], event,'acousticness')
          update_characteristic_index(catalog['energy_index'], event,'energy')
          update_characteristic_index(catalog['tempo_index'], event,'tempo')
+         update_characteristic_index(catalog['times'], event,'created_at')
     return catalog
 
 def update_characteristic_index(map, event,characteristic):
    
-    characteristic_value = float(event[characteristic])
+    if characteristic=='created_at':
+         hora = event['created_at']
+         hora = datetime.datetime.strptime(hora, '%Y-%m-%d %H:%M:%S')
+         hora=hora.time()
+         characteristic_value=hora
+    else:
+        characteristic_value = float(event[characteristic])
     entry = om.get(map, characteristic_value)
     if entry is None:
         entry = new_entry()
@@ -116,8 +135,6 @@ def add_hashtag(event2,catalog):
         event2['hashtag']=lt.newList('ARRAY_LIST')
         lt.addLast(event2['hashtag'],hashtag)
         m.put(catalog['events'],tupla,event2)
-     
-
     
 
 # Funciones para creacion de datos
@@ -175,20 +192,45 @@ def get_tracks_study(catalog,lo1,hi1,lo2,hi2):
     return instru_tempo_list
 
 def add_genre(catalog,generos,name,lo,hi):
-    catalog['tempo_generos'][name]=(lo,hi)
+    catalog['tempo_generos_editable'][name]=(lo,hi)
     generos.append(name)
     
 def get_events_by_genero(catalog,generos):
     total=0
     lista=lt.newList('ARRAY_LIST')
     for genero in generos:
-        lo=catalog['tempo_generos'][genero][0]
-        hi=catalog['tempo_generos'][genero][1]
+        lo=catalog['tempo_generos_editable'][genero][0]
+        hi=catalog['tempo_generos_editable'][genero][1]
         ans_genero=get_events_characteristic(catalog,'tempo_index',lo,hi),genero,lo,hi
         lt.addLast(lista,ans_genero)
         total+=ans_genero[0][0]
     return total,lista
 
+def req5(catalog,lo,hi):
+    lst=om.values(catalog['times'],lo,hi)
+    diccionario={}
+
+    for genero in catalog['tempo_generos']:
+        mapa=m.newMap(10,maptype='Probing',loadfactor=0.5)
+        diccionario[genero]=[0,mapa]
+
+    for entry in lt.iterator(lst):
+        for event in lt.iterator(entry['lstevents']):
+            for genero in catalog['tempo_generos']:
+                lo=catalog['tempo_generos'][genero][0]
+                hi=catalog['tempo_generos'][genero][1]
+                if lo<=float(event['tempo'])<=hi:
+                    diccionario[genero][0]+=1
+                    if m.size(diccionario[genero][1])<=9:
+                       m.put(diccionario[genero][1],event['track_id'],event)
+    x=0
+    mejor=''
+    for genero in diccionario:
+        if diccionario[genero][0]>x:
+            x=diccionario[genero][0]
+            mejor=genero
+    
+    return mejor,x
 
 def events_size(catalog):
     return m.size(catalog['events'])
@@ -198,6 +240,9 @@ def artists_size(catalog):
 
 def tracks_size(catalog):
     return m.size(catalog['tracks'])
+
+def events_list(catalog):
+    return m.valueSet(catalog['events'])
 
 
 

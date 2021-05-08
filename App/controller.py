@@ -25,6 +25,7 @@ import time
 import tracemalloc
 import model
 import csv
+import datetime
 from DISClib.ADT import list as lt
 
 
@@ -148,6 +149,11 @@ def get_events_by_genero(catalog,generos):
     
     return ans,delta_time, delta_memory
 
+def req5(catalog,lo,hi):
+    lo=datetime.datetime.strptime(lo, '%H:%M:%S').time()
+    hi=datetime.datetime.strptime(hi, '%H:%M:%S').time()
+    return model.req5(catalog,lo,hi)
+
 def events_size(catalog):
     return model.events_size(catalog)
 
@@ -156,6 +162,9 @@ def artists_size(catalog):
 
 def tracks_size(catalog):
     return model.tracks_size(catalog)
+
+def events_list(catalog):
+    return model.events_list(catalog)
 
 
 # ======================================

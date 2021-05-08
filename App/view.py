@@ -23,7 +23,9 @@
 import config as cf
 import sys
 import controller
+import datetime
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as om
 assert cf
 
 """
@@ -57,11 +59,17 @@ def load_data(catalog):
     controller.load_data(catalog)
 
 def print_loads(catalog):
-    #TODO imprimir eventos
     print('Se han cargado',controller.events_size(catalog),'eventos de reproducción')
     print('Se han registrado',controller.artists_size(catalog),'artistas diferentes')
     print('Se han registrado',controller.tracks_size(catalog),'canciones diferentes')
-    
+    eventos=controller.events_list(catalog)
+    i=1
+    while i<=10 and i<=lt.size(eventos):
+        #TODO poner las vainas estas
+        evento=lt.getElement(eventos,i)
+        print('El evento número',i,)
+        i+=1
+        
 def print_req1(catalog,ans):
     print('---RESULTADOS REQ. 1---')
     print('Total de reproducciones: ',ans[0],'Total de artistas diferentes: ',ans[1])
@@ -73,7 +81,7 @@ def print_req2(catalog,lo1,hi1,lo2,hi2,ans):
     print('Se identificaron un total de',lt.size(ans),'canciones diferentes')
     print('--Id único de canción--')
     i=1
-    while i<=5:
+    while i<=5 and i<=lt.size(ans):
         #TODO random
         track=lt.getElement(ans,i)
         print('Canción '+str(i)+':',track['track_id'],'con energía',track['energy'],'y danzabilidad',track['danceability'])
@@ -86,7 +94,7 @@ def print_req3(catalog,lo1,hi1,lo2,hi2,ans):
     print('Se identificaron un total de',lt.size(ans),'canciones diferentes')
     print('--Id único de canción--')
     i=1
-    while i<=5:
+    while i<=5  and i<=lt.size(ans):
         #TODO random
         track=lt.getElement(ans,i)
         print('Canción '+str(i)+':',track['track_id'],'con instrumentalidad',track['instrumentalness'],'y tempo',track['tempo'])
@@ -101,7 +109,7 @@ def print_req4(catalog, ans):
         print('Se han registrado',entry[0][0],'reproducciones y',entry[0][1],'diferentes artistas')
         print('--- Algunos artistas de',entry[1],'---')
         i=1
-        while i<=5:
+        while i<=5 and i<=lt.size(entry[0][2]):
             artist=lt.getElement(entry[0][2],i)
             print('Artista '+str(i)+':',artist)
             i+=1
@@ -168,7 +176,9 @@ while True:
         print_req4(catalog,ans[0])
         print(round(ans[1],3),'[ms]',round(ans[2],3),'[kb]')
     elif int(inputs[0]) == 6:
-        pass
+        lo=input('Ingrese hora min: ')
+        hi=input('Ingrese hora max: ')
+        print(controller.req5(catalog,lo,hi))
     else:
         sys.exit(0)
 sys.exit(0)
