@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from DISClib.Algorithms.Sorting import mergesort as merge
 import datetime
 assert cf
 
@@ -45,6 +46,8 @@ def new_catalog():
     catalog['artists']=m.newMap(maptype='Probing',loadfactor=0.5)
 
     catalog['tracks']=m.newMap(maptype='Probing',loadfactor=0.5)
+
+    catalog['values']=m.newMap(maptype='Probing',loadfactor=0.5)
    
     catalog['instrumentalness_index'] = om.newMap(omaptype='RBT',
                                       comparefunction=compare_characteristic)
@@ -103,6 +106,9 @@ def add_event(catalog, event):
          update_characteristic_index(catalog['tempo_index'], event,'tempo')
          update_characteristic_index(catalog['times'], event,'created_at')
     return catalog
+
+def add_values(value,catalog):
+    m.put(catalog['values'],value['hashtag'],value)
 
 def update_characteristic_index(map, event,characteristic):
    
@@ -208,29 +214,26 @@ def get_events_by_genero(catalog,generos):
 
 def req5(catalog,lo,hi):
     lst=om.values(catalog['times'],lo,hi)
-    diccionario={}
+    arreglo=lt.newList('ARRAY_LIST')
 
     for genero in catalog['tempo_generos']:
         mapa=m.newMap(10,maptype='Probing',loadfactor=0.5)
-        diccionario[genero]=[0,mapa]
+        info=[genero,0,mapa]
+        lt.addLast(arreglo,info)
 
     for entry in lt.iterator(lst):
         for event in lt.iterator(entry['lstevents']):
+            i=1
             for genero in catalog['tempo_generos']:
                 lo=catalog['tempo_generos'][genero][0]
                 hi=catalog['tempo_generos'][genero][1]
                 if lo<=float(event['tempo'])<=hi:
-                    diccionario[genero][0]+=1
-                    if m.size(diccionario[genero][1])<=9:
-                       m.put(diccionario[genero][1],event['track_id'],event)
-    x=0
-    mejor=''
-    for genero in diccionario:
-        if diccionario[genero][0]>x:
-            x=diccionario[genero][0]
-            mejor=genero
-    
-    return mejor,x
+                    info=lt.getElement(arreglo,i)
+                    info[1]+=1
+                    if m.size(info[2])<=9:
+                       m.put(info[2],event['track_id'],event)
+                i+=1
+    return merge.sort(arreglo,comparar_info_req5)
 
 def events_size(catalog):
     return m.size(catalog['events'])
@@ -257,5 +260,8 @@ def compare_characteristic(characteristic1, characteristic2):
         return 1
     else:
         return -1
+
+def comparar_info_req5(info1,info2):
+    return info1[1]>info2[1]
 
 # Funciones de ordenamiento

@@ -59,6 +59,13 @@ def load_events2(catalog):
     input_file = csv.DictReader(open(eventsfile, encoding='utf-8'))
     for event2 in input_file:
         model.add_hashtag(event2,catalog)
+    
+
+def load_sentiment(catalog):
+    sentifile = cf.data_dir + 'subsamples-small/sentiment_values.csv'
+    input_file = csv.DictReader(open(sentifile, encoding='utf-8'))
+    for value in input_file:
+        model.add_values(value,catalog)
  
 
 
@@ -150,9 +157,26 @@ def get_events_by_genero(catalog,generos):
     return ans,delta_time, delta_memory
 
 def req5(catalog,lo,hi):
+    ans = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
     lo=datetime.datetime.strptime(lo, '%H:%M:%S').time()
     hi=datetime.datetime.strptime(hi, '%H:%M:%S').time()
-    return model.req5(catalog,lo,hi)
+    ans = model.req5(catalog,lo,hi)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+    
+    return ans,delta_time,delta_memory
 
 def events_size(catalog):
     return model.events_size(catalog)

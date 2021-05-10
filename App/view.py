@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 import datetime
+import random 
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 assert cf
@@ -64,9 +65,16 @@ def print_loads(catalog):
     print('Se han registrado',controller.tracks_size(catalog),'canciones diferentes')
     eventos=controller.events_list(catalog)
     i=1
-    while i<=10 and i<=lt.size(eventos):
+    size=lt.size(eventos)
+    while i<=5:
         #TODO poner las vainas estas
         evento=lt.getElement(eventos,i)
+        print('El evento número',i,)
+        i+=1
+    i=0
+    while i<=5:
+        #TODO poner las vainas estas
+        evento=lt.getElement(eventos,size-i)
         print('El evento número',i,)
         i+=1
         
@@ -80,10 +88,11 @@ def print_req2(catalog,lo1,hi1,lo2,hi2,ans):
     print('La danzabilidad está entre',lo1,'y',hi1)
     print('Se identificaron un total de',lt.size(ans),'canciones diferentes')
     print('--Id único de canción--')
+    size=lt.size(ans)
     i=1
-    while i<=5 and i<=lt.size(ans):
-        #TODO random
-        track=lt.getElement(ans,i)
+    while i<=5 and i<=size:
+        indice=random.randint(1,size)
+        track=lt.getElement(ans,indice)
         print('Canción '+str(i)+':',track['track_id'],'con energía',track['energy'],'y danzabilidad',track['danceability'])
         i+=1
 
@@ -93,10 +102,11 @@ def print_req3(catalog,lo1,hi1,lo2,hi2,ans):
     print('El tempo está entre',lo1,'y',hi1)
     print('Se identificaron un total de',lt.size(ans),'canciones diferentes')
     print('--Id único de canción--')
+    size=lt.size(ans)
     i=1
-    while i<=5  and i<=lt.size(ans):
-        #TODO random
-        track=lt.getElement(ans,i)
+    while i<=5  and i<=size:
+        indice=random.randint(1,size)
+        track=lt.getElement(ans,indice)
         print('Canción '+str(i)+':',track['track_id'],'con instrumentalidad',track['instrumentalness'],'y tempo',track['tempo'])
         i+=1
 
@@ -178,7 +188,9 @@ while True:
     elif int(inputs[0]) == 6:
         lo=input('Ingrese hora min: ')
         hi=input('Ingrese hora max: ')
-        print(controller.req5(catalog,lo,hi))
+        ans=controller.req5(catalog,lo,hi)
+        print(ans[0])
+        print(round(ans[1],3),'[ms]',round(ans[2],3),'[kb]')
     else:
         sys.exit(0)
 sys.exit(0)
