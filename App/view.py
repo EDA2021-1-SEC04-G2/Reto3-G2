@@ -66,18 +66,12 @@ def print_loads(catalog):
     eventos=controller.events_list(catalog)
     i=1
     size=lt.size(eventos)
-    while i<=5:
-        #TODO poner las vainas estas
-        evento=lt.getElement(eventos,i)
-        print('El evento número',i,)
+    print('---Algunos eventos son---')
+    while i<=10:
+        event=lt.getElement(eventos,i)
+        print('El evento número',i,'es de la cancion con identificador',event['track_id'],'y del artista',event.get('artist_id','NO DISPONIBLE'))
         i+=1
-    i=0
-    while i<=5:
-        #TODO poner las vainas estas
-        evento=lt.getElement(eventos,size-i)
-        print('El evento número',i,)
-        i+=1
-        
+
 def print_req1(catalog,ans):
     print('---RESULTADOS REQ. 1---')
     print('Total de reproducciones: ',ans[0],'Total de artistas diferentes: ',ans[1])
@@ -123,6 +117,21 @@ def print_req4(catalog, ans):
             artist=lt.getElement(entry[0][2],i)
             print('Artista '+str(i)+':',artist)
             i+=1
+def print_req5(ans,lo,hi):
+    print('---RESULTADOS REQ. 5---')
+    print('Hay un total de',ans[2],'reproducciones entre',lo,'y',hi)
+    print('---Generos ordenados por reproducciones---')
+    i = 1
+    for info in lt.iterator(ans[1]):
+        print("Top",i,":",info[0],"con",info[1],"reproducciones")
+        i +=1
+    print('Genero más escuchado es',lt.getElement(ans[1],1)[0],'con',lt.getElement(ans[1],1)[1],'reproducciones')
+    print('Algunas canciones de',lt.getElement(ans[1],1)[0],'y analisis de sentimientos')
+    i=1
+    while i<=10:
+        tupla=lt.getElement(ans[0],i)
+        print('La cancion con id',tupla[0],'tiene',tupla[1],'hashtags y tiene un VADER promedio de',tupla[2])
+        i+=1
 
 catalog = None
 
@@ -189,7 +198,7 @@ while True:
         lo=input('Ingrese hora min: ')
         hi=input('Ingrese hora max: ')
         ans=controller.req5(catalog,lo,hi)
-        print(ans[0])
+        print_req5(ans[0],lo,hi)
         print(round(ans[1],3),'[ms]',round(ans[2],3),'[kb]')
     else:
         sys.exit(0)

@@ -44,6 +44,7 @@ def init_catalog():
 def load_data(catalog):
     load_events1(catalog)
     load_events2(catalog)
+    load_sentiment(catalog)
 
 
 def load_events1(catalog):

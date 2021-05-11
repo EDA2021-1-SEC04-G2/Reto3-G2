@@ -129,7 +129,7 @@ def update_characteristic_index(map, event,characteristic):
     return map
 
 def add_hashtag(event2,catalog):
-    tupla=event2['created_at'],event2['user_id'],event2['track_id']
+    tupla = event2['created_at'],event2['user_id'],event2['track_id']
     entry=m.get(catalog['events'],tupla)
     hashtag=event2['hashtag'].lower()
     if entry!=None:
@@ -212,28 +212,52 @@ def get_events_by_genero(catalog,generos):
         total+=ans_genero[0][0]
     return total,lista
 
+def get_vader(catalog, arreglo,total):
+    entry_most_rep = lt.getElement(arreglo,1)
+    tracks = entry_most_rep[2]
+    tracks = m.valueSet(tracks)
+    lista=lt.newList('ARRAY_LIST')
+    for track in lt.iterator(tracks):
+        hashtags = track['hashtag']
+        suma = 0 
+        mean = 0
+        for hashtag in lt.iterator(hashtags):
+            entry = m.get(catalog["values"], hashtag)
+            if entry is not None:
+                sentiments=me.getValue(entry)
+                vader = sentiments["vader_avg"]
+                if vader != "":
+                    vader = float(vader)
+                    suma += vader
+                
+        if lt.size(hashtags) != 0:
+            mean = suma/lt.size(hashtags)
+        lt.addLast(lista,(track["track_id"],lt.size(hashtags), mean))
+    return lista,arreglo,total
+
 def req5(catalog,lo,hi):
     lst=om.values(catalog['times'],lo,hi)
     arreglo=lt.newList('ARRAY_LIST')
-
+    total=0
     for genero in catalog['tempo_generos']:
         mapa=m.newMap(10,maptype='Probing',loadfactor=0.5)
-        info=[genero,0,mapa]
-        lt.addLast(arreglo,info)
+        entry=[genero,0,mapa]
+        lt.addLast(arreglo,entry)
 
-    for entry in lt.iterator(lst):
-        for event in lt.iterator(entry['lstevents']):
+    for nodo in lt.iterator(lst):
+        for event in lt.iterator(nodo['lstevents']):
             i=1
+            total+=1
             for genero in catalog['tempo_generos']:
                 lo=catalog['tempo_generos'][genero][0]
                 hi=catalog['tempo_generos'][genero][1]
                 if lo<=float(event['tempo'])<=hi:
-                    info=lt.getElement(arreglo,i)
-                    info[1]+=1
-                    if m.size(info[2])<=9:
-                       m.put(info[2],event['track_id'],event)
+                    entry=lt.getElement(arreglo,i)
+                    entry[1]+=1
+                    m.put(entry[2],event['track_id'],event)
                 i+=1
-    return merge.sort(arreglo,comparar_info_req5)
+    arreglo = merge.sort(arreglo,comparar_info_req5)
+    return get_vader(catalog,arreglo,total)
 
 def events_size(catalog):
     return m.size(catalog['events'])
@@ -261,7 +285,10 @@ def compare_characteristic(characteristic1, characteristic2):
     else:
         return -1
 
-def comparar_info_req5(info1,info2):
-    return info1[1]>info2[1]
+def comparar_info_req5(entry1,entry2):
+    return entry1[1]>entry2[1]
+
+def comparar_hashtags(tupla1,tupla2):
+    return tupla1[1]>tupla2[1]
 
 # Funciones de ordenamiento
